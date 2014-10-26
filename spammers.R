@@ -36,15 +36,10 @@ sentMessages = ggplot(spammers, aes(x = pmSentDate)) +
   xlab('Date') + ylab('N of sent spam messages')
 grid.arrange(signUps, sentMessages, nrow=2)
 
-#usernames = unique(spammers$user)
-#unique(by(spammers, spammers$user, FUN = function(x) list(x$signUpTime, min(x$pmSentTime))))
-
-
-
-
-
-
-
-
-
+withFistPm = aggregate(pmSentTime ~ user + signUpTime, spammers, FUN = min)
+withFistPm$signUpAndPmDiff = as.numeric(difftime(withFistPm$pmSentTime, withFistPm$signUpTime, units = 'mins'))
+withFistPm$signUpAndPmDiffScale = ifelse(withFistPm$signUpAndPmDiff < 30, '< 30min',
+                                         ifelse(withFistPm$signUpAndPmDiff < 120, '> 30min & < 2hr',
+                                                ifelse(withFistPm$signUpAndPmDiff < 60*24, '> 2hr & < 1d', '> 1d')))
+summary(factor(withFistPm$signUpAndPmDiffScale))
 
