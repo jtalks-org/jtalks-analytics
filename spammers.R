@@ -34,12 +34,13 @@ sentMessages = ggplot(spammers, aes(x = pmSentDate)) +
            size = 4, vjust=-0.4, hjust = 1, color = 'red', alpha = 0.8) +
   scale_x_date(breaks = "2 month", labels = date_format("%Y-%b")) +
   xlab('Date') + ylab('N of sent spam messages')
-grid.arrange(signUps, sentMessages, nrow=2)
+png(filename='spammers-activity-vs-releases.png', width=1200, height=600)
+plot = grid.arrange(signUps, sentMessages, nrow=2)
+dev.off()
 
 withFistPm = aggregate(pmSentTime ~ user + signUpTime, spammers, FUN = min)
 withFistPm$signUpAndPmDiff = as.numeric(difftime(withFistPm$pmSentTime, withFistPm$signUpTime, units = 'mins'))
 withFistPm$signUpAndPmDiffScale = ifelse(withFistPm$signUpAndPmDiff < 30, '< 30min',
                                          ifelse(withFistPm$signUpAndPmDiff < 120, '> 30min & < 2hr',
                                                 ifelse(withFistPm$signUpAndPmDiff < 60*24, '> 2hr & < 1d', '> 1d')))
-summary(factor(withFistPm$signUpAndPmDiffScale))
-
+summary(factor(withFistPm$signUpAndPmDiffScale))/119 * 100 # %
