@@ -19,7 +19,6 @@ spammers$signUpDate = as.Date(spammers$signUpTime)
 spammers$pmSentDate = as.Date(spammers$pmSentTime)
 startingDate <- as.Date('2013-01-01')
 spammers = subset(spammers, signUpDate > startingDate & pmSentDate > startingDate)
-summary(aggregate(spammers$user, list('user'=spammers$user), length))
 
 signUps = ggplot(spammers, aes(x = signUpDate)) +
   geom_histogram(alpha=.5, binwidth=5, fill = 'steelblue') +
@@ -50,3 +49,13 @@ ggplot(withFistPm, aes(x = signUpAndPmDiff)) +
   scale_x_log10(breaks = timeScales, labels = names(timeScales)) +
   xlab('Sign Up Time - First Spam Time') + ylab('N of spammers')
 dev.off()
+
+nOfMessagesPerSpammer = aggregate(spammers$user, list('user'=spammers$user), length)
+png(filename='n-of-messages-left-by-spammer.png')
+ggplot(nOfMessagesPerSpammer, aes(x = x)) +
+  geom_histogram(alpha=.5, fill = 'steelblue', binwidth = 0.1) +
+  scale_x_log10(breaks = c(1, 10, 100, 1000, 5000)) +
+  xlab('N of messages') + ylab('N of spammers')
+dev.off()
+
+
