@@ -19,7 +19,7 @@ spammers$signUpDate = as.Date(spammers$signUpTime)
 spammers$pmSentDate = as.Date(spammers$pmSentTime)
 startingDate <- as.Date('2013-01-01')
 spammers = subset(spammers, signUpDate > startingDate & pmSentDate > startingDate)
-
+#### Sign Ups vs. Releases Plot ####
 signUps = ggplot(spammers, aes(x = signUpDate)) +
   geom_histogram(alpha=.5, binwidth=5, fill = 'steelblue') +
   geom_vline(xintercept = as.numeric(releases), color = 'red', alpha = 0.5, linetype = 'dashed') +
@@ -38,6 +38,7 @@ png(filename='spammers-activity-vs-releases.png', width=1200, height=600)
 plot = grid.arrange(signUps, sentMessages, nrow=2)
 dev.off()
 
+#### When Spammers start activity Plot ####
 withFistPm = aggregate(pmSentTime ~ user + signUpTime, spammers, FUN = min)
 withFistPm$signUpAndPmDiff = as.numeric(difftime(withFistPm$pmSentTime, withFistPm$signUpTime, units = 'secs'))
 
@@ -50,6 +51,7 @@ ggplot(withFistPm, aes(x = signUpAndPmDiff)) +
   xlab('Sign Up Time - First Spam Time') + ylab('N of spammers')
 dev.off()
 
+#### N of messages left by spammers ####
 nOfMessagesPerSpammer = aggregate(spammers$user, list('user'=spammers$user), length)
 png(filename='n-of-messages-left-by-spammer.png')
 ggplot(nOfMessagesPerSpammer, aes(x = x)) +
