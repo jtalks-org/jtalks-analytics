@@ -19,6 +19,7 @@ spammers$signUpDate = as.Date(spammers$signUpTime)
 spammers$pmSentDate = as.Date(spammers$pmSentTime)
 startingDate <- as.Date('2013-01-01')
 spammers = subset(spammers, signUpDate > startingDate & pmSentDate > startingDate)
+summary(aggregate(spammers$user, list('user'=spammers$user), length))
 
 signUps = ggplot(spammers, aes(x = signUpDate)) +
   geom_histogram(alpha=.5, binwidth=5, fill = 'steelblue') +
@@ -39,8 +40,13 @@ plot = grid.arrange(signUps, sentMessages, nrow=2)
 dev.off()
 
 withFistPm = aggregate(pmSentTime ~ user + signUpTime, spammers, FUN = min)
-withFistPm$signUpAndPmDiff = as.numeric(difftime(withFistPm$pmSentTime, withFistPm$signUpTime, units = 'mins'))
-withFistPm$signUpAndPmDiffScale = ifelse(withFistPm$signUpAndPmDiff < 30, '< 30min',
-                                         ifelse(withFistPm$signUpAndPmDiff < 120, '> 30min & < 2hr',
-                                                ifelse(withFistPm$signUpAndPmDiff < 60*24, '> 2hr & < 1d', '> 1d')))
-summary(factor(withFistPm$signUpAndPmDiffScale))/119 * 100 # %
+withFistPm$signUpAndPmDiff = as.numeric(difftime(withFistPm$pmSentTime, withFistPm$signUpTime, units = 'secs'))
+
+timeScales = c(60, 3600, 3600 * 24, 3600 * 24 * 7, 3600 * 24 * 7 * 30)
+names(timeScales) = c('min', 'hour', 'day', 'week', 'mon')
+png(filename='spammers-time-betwee-registration-and-first-spam.png')
+ggplot(withFistPm, aes(x = signUpAndPmDiff)) +
+  geom_histogram(alpha=.5, fill = 'steelblue', binwidth=.2) +
+  scale_x_log10(breaks = timeScales, labels = names(timeScales)) +
+  xlab('Sign Up Time - First Spam Time') + ylab('N of spammers')
+dev.off()
