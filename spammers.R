@@ -9,8 +9,8 @@ library('scales')
 releases = as.Date(c('2013-01-30', '2013-03-15', '2013-04-13', '2013-05-04', '2013-06-12',
                      '2013-07-12', '2013-08-18', '2013-10-06', '2013-10-25', '2013-11-19',
                      '2013-12-09', '2014-01-16', '2014-02-20', '2014-03-26', '2014-05-04',
-                     '2014-05-31', '2014-06-26', '2014-08-16', '2014-10-11'))
-names(releases) = c(paste('v-1.', 3:9, sep=''), paste('v-2.', 0:11, sep=''))
+                     '2014-05-31', '2014-06-26', '2014-08-16', '2014-10-11', '2014-11-04'))
+names(releases) = c(paste('v-1.', 3:9, sep=''), paste('v-2.', 0:12, sep=''))
 
 spammers = read.csv(file = 'data/spammers.csv', sep = '\t', stringsAsFactors=FALSE,
                     col.names = c('user', 'email', 'lastLogin', 'lang', 'signUpTime',
